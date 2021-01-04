@@ -1,24 +1,45 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { Button, TextField, Collapse } from "@material-ui/core";
 
 function App() {
+  const [phone, setPhone] = React.useState<string>();
+  const [errors, setErrors] = React.useState<{ phone: string }>();
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { value },
+    } = event;
+    setErrors({ phone: "" });
+    setPhone(value);
+    let reg = new RegExp(/^\d*$/).test(value);
+    if (!reg) {
+      setErrors({ phone: "Only numbers are permitted" });
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <TextField
+        id="outlined-basic"
+        autoComplete="off"
+        value={phone}
+        label="Phone number"
+        inputProps={{ maxLength: 255 }}
+        onChange={handleChange}
+        required
+        type="number"
+        error={Boolean(errors?.phone)}
+        helperText={errors?.phone}
+        variant="outlined"
+      />
+      <Collapse in={phone?.length! > 0 && errors?.phone === ""}>
+        <div style={{ width: "100%", marginTop: "10px" }}>
+          <Button variant="contained" color="primary">
+            SAVE
+          </Button>
+        </div>
+      </Collapse>
     </div>
   );
 }
